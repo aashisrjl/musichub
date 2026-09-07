@@ -6,6 +6,7 @@ import {
   TextInput,
   FlatList,
   TouchableOpacity,
+  Image,
 } from 'react-native';
 import { Search as SearchIcon, X } from 'lucide-react-native';
 import SongListItem from '@/components/SongListItem';
@@ -43,7 +44,14 @@ export default function SearchScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Search</Text>
+        <View style={styles.headerContent}>
+          <Image 
+            source={require('../../public/logo.png')} 
+            style={styles.logo}
+            resizeMode="contain"
+          />
+          <Text style={styles.title}>Search</Text>
+        </View>
       </View>
 
       <View style={styles.searchBarContainer}>
@@ -97,6 +105,16 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.xl,
     paddingHorizontal: Spacing.lg,
     marginBottom: Spacing.md,
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+  },
+  logo: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
   title: {
     fontSize: 28,

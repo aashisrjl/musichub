@@ -43,6 +43,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: Spacing.lg,
   },
+  logo: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+  },
   title: {
     ...Typography.heading,
     color: Colors.text,

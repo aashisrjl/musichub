@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ChevronLeft } from 'lucide-react-native';
 import { TouchableOpacity } from 'react-native';
@@ -28,7 +28,14 @@ export default function CategoryDetailScreen() {
           <ChevronLeft size={26} color={Colors.text} />
         </TouchableOpacity>
         <View style={styles.headerInfo}>
-          <Text style={styles.title}>{label}</Text>
+          <View style={styles.headerContent}>
+            <Image 
+              source={require('../../public/logo.png')} 
+              style={styles.logo}
+              resizeMode="contain"
+            />
+            <Text style={styles.title}>{label}</Text>
+          </View>
           <Text style={styles.count}>{songs.length} songs</Text>
         </View>
       </View>
@@ -76,6 +83,16 @@ const styles = StyleSheet.create({
   },
   headerInfo: {
     flex: 1,
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+  },
+  logo: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
   title: {
     fontSize: 26,

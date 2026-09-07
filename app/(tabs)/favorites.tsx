@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image } from 'react-native';
 import { Heart } from 'lucide-react-native';
 import SongListItem from '@/components/SongListItem';
 import EmptyState from '@/components/EmptyState';
@@ -14,7 +14,14 @@ export default function FavoritesScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Favorites</Text>
+        <View style={styles.headerContent}>
+          <Image 
+            source={require('../../public/logo.png')} 
+            style={styles.logo}
+            resizeMode="contain"
+          />
+          <Text style={styles.title}>Favorites</Text>
+        </View>
         {favSongs.length > 0 && (
           <Text style={styles.count}>{favSongs.length} songs</Text>
         )}
@@ -53,6 +60,16 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.xl,
     paddingHorizontal: Spacing.lg,
     marginBottom: Spacing.md,
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+  },
+  logo: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
   title: {
     fontSize: 28,

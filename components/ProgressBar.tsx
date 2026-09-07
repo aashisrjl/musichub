@@ -4,6 +4,8 @@ import {
   StyleSheet,
   Pressable,
   ViewStyle,
+  PanResponder,
+  GestureResponderEvent,
 } from 'react-native';
 import { Colors, Radius, Spacing } from '@/theme';
 
@@ -26,13 +28,43 @@ export default function ProgressBar({
 }: ProgressBarProps) {
   const clampedProgress = Math.max(0, Math.min(1, progress));
   const [trackWidth, setTrackWidth] = React.useState(0);
+  const [isSeeking, setIsSeeking] = React.useState(false);
+  const [seekProgress, setSeekProgress] = React.useState(clampedProgress);
 
-  const handlePress = (evt: any) => {
+  const handlePress = (evt: GestureResponderEvent) => {
     if (!onSeek || trackWidth === 0) return;
     const x = evt.nativeEvent.locationX;
     const p = Math.max(0, Math.min(1, x / trackWidth));
     onSeek(p);
   };
+
+  const panResponder = React.useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderGrant: () => {
+        setIsSeeking(true);
+      },
+      onPanResponderMove: (evt) => {
+        if (trackWidth === 0) return;
+        const x = evt.nativeEvent.moveX;
+        const p = Math.max(0, Math.min(1, x / trackWidth));
+        setSeekProgress(p);
+      },
+      onPanResponderRelease: (evt) => {
+        if (trackWidth === 0 || !onSeek) return;
+        const x = evt.nativeEvent.moveX;
+        const p = Math.max(0, Math.min(1, x / trackWidth));
+        setIsSeeking(false);
+        onSeek(p);
+      },
+      onPanResponderTerminate: () => {
+        setIsSeeking(false);
+      },
+    }),
+  ).current;
+
+  const displayProgress = isSeeking ? seekProgress : clampedProgress;
 
   return (
     <View
@@ -46,7 +78,7 @@ export default function ProgressBar({
           style={[
             styles.fill,
             {
-              width: `${clampedProgress * 100}%`,
+              width: `${displayProgress * 100}%`,
               backgroundColor: fillColor,
               height,
             },
@@ -57,9 +89,11 @@ export default function ProgressBar({
         style={[
           styles.thumb,
           {
-            left: `${clampedProgress * 100}%`,
+            left: `${displayProgress * 100}%`,
+            transform: [{ scale: isSeeking ? 1.2 : 1 }],
           },
         ]}
+        {...panResponder.panHandlers}
       />
     </View>
   );

@@ -1,4 +1,4 @@
-export type SongCategory = 'old_nepali' | 'old_hindi' | 'device';
+export type SongCategory = string;
 
 export type RepeatMode = 'off' | 'all' | 'one';
 

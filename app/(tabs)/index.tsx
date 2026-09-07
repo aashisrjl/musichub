@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   FlatList,
   Platform,
+  Image,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Search, Settings, Clock, Smartphone, ChevronRight } from 'lucide-react-native';
@@ -19,10 +20,10 @@ import { usePlayer } from '@/context/PlayerContext';
 
 import {
   getFeaturedSong,
-  getOldNepaliSongs,
-  getOldHindiSongs,
   getRecentlyPlayedSongs,
   getAllSongs,
+  getCategories,
+  getSongsByCategory,
 } from '@/services/musicLibrary';
 
 export default function HomeScreen() {
@@ -30,8 +31,7 @@ export default function HomeScreen() {
   const { recentlyPlayed } = usePlayer();
 
   const featured = getFeaturedSong();
-  const nepaliSongs = useMemo(() => getOldNepaliSongs(), []);
-  const hindiSongs = useMemo(() => getOldHindiSongs(), []);
+  const categories = getCategories();
   const recentSongs = useMemo(
     () => getRecentlyPlayedSongs(recentlyPlayed),
     [recentlyPlayed],
@@ -45,9 +45,16 @@ export default function HomeScreen() {
       showsVerticalScrollIndicator={false}>
       {/* Header */}
       <View style={styles.header}>
-        <View>
-          <Text style={styles.appName}>MusicHub</Text>
-          <Text style={styles.subtitle}>Your collection of timeless classics</Text>
+        <View style={styles.headerContent}>
+          <Image 
+            source={require('../../public/logo.png')} 
+            style={styles.logo}
+            resizeMode="contain"
+          />
+          <View>
+            <Text style={styles.appName}>MusicHub</Text>
+            <Text style={styles.subtitle}>Your collection of timeless classics</Text>
+          </View>
         </View>
         <View style={styles.headerIcons}>
           <TouchableOpacity
@@ -65,6 +72,15 @@ export default function HomeScreen() {
         </View>
       </View>
 
+      {/* Banner */}
+      <View style={styles.bannerContainer}>
+        <Image 
+          source={require('../../public/banner.jpeg')} 
+          style={styles.banner}
+          resizeMode="cover"
+        />
+      </View>
+
       {allSongs.length === 0 ? (
         <EmptyState
           title="No music found"
@@ -79,51 +95,33 @@ export default function HomeScreen() {
             </View>
           )}
 
-          {/* Old Nepali */}
-          {nepaliSongs.length > 0 && (
-            <View style={styles.section}>
-              <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Old Nepali</Text>
-                <TouchableOpacity
-                  onPress={() => router.push('/category/old_nepali')}>
-                  <Text style={styles.seeAll}>See All</Text>
-                </TouchableOpacity>
+          {/* Dynamic Categories */}
+          {categories.map((category) => {
+            const categorySongs = getSongsByCategory(category.key);
+            if (categorySongs.length === 0) return null;
+            
+            return (
+              <View key={category.key} style={styles.section}>
+                <View style={styles.sectionHeader}>
+                  <Text style={styles.sectionTitle}>{category.label}</Text>
+                  <TouchableOpacity
+                    onPress={() => router.push(`/category/${category.key}`)}>
+                    <Text style={styles.seeAll}>See All</Text>
+                  </TouchableOpacity>
+                </View>
+                <FlatList
+                  data={categorySongs}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  keyExtractor={(item) => item.id}
+                  renderItem={({ item }) => (
+                    <SongCard song={item} queue={categorySongs} />
+                  )}
+                  contentContainerStyle={styles.horizontalList}
+                />
               </View>
-              <FlatList
-                data={nepaliSongs}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                  <SongCard song={item} queue={nepaliSongs} />
-                )}
-                contentContainerStyle={styles.horizontalList}
-              />
-            </View>
-          )}
-
-          {/* Old Hindi */}
-          {hindiSongs.length > 0 && (
-            <View style={styles.section}>
-              <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Old Hindi</Text>
-                <TouchableOpacity
-                  onPress={() => router.push('/category/old_hindi')}>
-                  <Text style={styles.seeAll}>See All</Text>
-                </TouchableOpacity>
-              </View>
-              <FlatList
-                data={hindiSongs}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                  <SongCard song={item} queue={hindiSongs} />
-                )}
-                contentContainerStyle={styles.horizontalList}
-              />
-            </View>
-          )}
+            );
+          })}
 
           {/* Device Music */}
           {Platform.OS !== 'web' && (
@@ -190,8 +188,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: Spacing.xl,
+    marginBottom: Spacing.md,
     paddingTop: Spacing.xl,
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+  },
+  logo: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
   },
   appName: {
     fontSize: 32,
@@ -202,6 +210,16 @@ const styles = StyleSheet.create({
   subtitle: {
     ...Typography.caption,
     color: Colors.textSecondary,
+  },
+  bannerContainer: {
+    marginBottom: Spacing.xl,
+    borderRadius: Radius.lg,
+    overflow: 'hidden',
+  },
+  banner: {
+    width: '100%',
+    height: 180,
+    borderRadius: Radius.lg,
   },
   headerIcons: {
     flexDirection: 'row',

@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   RefreshControl,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ChevronLeft, Smartphone, RefreshCw } from 'lucide-react-native';
@@ -47,7 +48,14 @@ export default function DeviceMusicScreen() {
           <ChevronLeft size={26} color={Colors.text} />
         </TouchableOpacity>
         <View style={styles.headerInfo}>
-          <Text style={styles.title}>Device Music</Text>
+          <View style={styles.headerContent}>
+            <Image 
+              source={require('../public/logo.png')} 
+              style={styles.logo}
+              resizeMode="contain"
+            />
+            <Text style={styles.title}>Device Music</Text>
+          </View>
           <Text style={styles.count}>
             {loading ? 'Scanning...' : `${songs.length} songs found`}
           </Text>
@@ -130,6 +138,16 @@ const styles = StyleSheet.create({
   },
   headerInfo: {
     flex: 1,
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+  },
+  logo: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
   title: {
     fontSize: 26,

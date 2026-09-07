@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import {
   Play,
   Pause,
@@ -39,6 +39,24 @@ export default function PlaybackControls({
   const sideIconSize = isLarge ? 26 : 22;
   const centerIconSize = isLarge ? 34 : 28;
   const playButtonSize = isLarge ? 72 : 56;
+  
+  const scaleAnim = React.useRef(new Animated.Value(1)).current;
+
+  const handlePlayPause = () => {
+    Animated.sequence([
+      Animated.timing(scaleAnim, {
+        toValue: 0.9,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(scaleAnim, {
+        toValue: 1,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+    ]).start();
+    onPlayPause();
+  };
 
   return (
     <View style={styles.container}>
@@ -67,28 +85,30 @@ export default function PlaybackControls({
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={onPlayPause}
+          onPress={handlePlayPause}
           style={[
             styles.playButton,
             { width: playButtonSize, height: playButtonSize },
           ]}
           activeOpacity={0.8}>
-          {isPlaying ? (
-            <Pause
-              size={centerIconSize}
-              color={Colors.background}
-              fill={Colors.background}
-              strokeWidth={0}
-            />
-          ) : (
-            <Play
-              size={centerIconSize}
-              color={Colors.background}
-              fill={Colors.background}
-              strokeWidth={0}
-              style={{ marginLeft: 3 }}
-            />
-          )}
+          <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+            {isPlaying ? (
+              <Pause
+                size={centerIconSize}
+                color={Colors.background}
+                fill={Colors.background}
+                strokeWidth={0}
+              />
+            ) : (
+              <Play
+                size={centerIconSize}
+                color={Colors.background}
+                fill={Colors.background}
+                strokeWidth={0}
+                style={{ marginLeft: 3 }}
+              />
+            )}
+          </Animated.View>
         </TouchableOpacity>
 
         <TouchableOpacity

@@ -5,8 +5,11 @@ import {
   StyleSheet,
   Pressable,
   Dimensions,
+  TouchableOpacity,
+  Animated,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Play, Pause, Music } from 'lucide-react-native';
 import AlbumArtwork from './AlbumArtwork';
 import { Song } from '@/types';
 import { Colors, Typography, Spacing, Radius } from '@/theme';
@@ -21,11 +24,38 @@ interface FeaturedCardProps {
 }
 
 export default function FeaturedCard({ song, queue }: FeaturedCardProps) {
-  const { playSong, currentSong, isPlaying } = usePlayer();
+  const { playSong, togglePlayPause, currentSong, isPlaying } = usePlayer();
   const isCurrent = currentSong?.id === song.id;
+  
+  const pulseAnim = React.useRef(new Animated.Value(1)).current;
+
+  React.useEffect(() => {
+    if (isCurrent && isPlaying) {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(pulseAnim, {
+            toValue: 1.05,
+            duration: 1000,
+            useNativeDriver: true,
+          }),
+          Animated.timing(pulseAnim, {
+            toValue: 1,
+            duration: 1000,
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
+    } else {
+      pulseAnim.setValue(1);
+    }
+  }, [isCurrent, isPlaying, pulseAnim]);
 
   const handlePlay = () => {
-    playSong(song, queue ?? [song]);
+    if (isCurrent) {
+      togglePlayPause();
+    } else {
+      playSong(song, queue ?? [song]);
+    }
   };
 
   return (
@@ -38,11 +68,20 @@ export default function FeaturedCard({ song, queue }: FeaturedCardProps) {
         end={{ x: 1, y: 1 }}
         style={styles.gradient}>
         <View style={styles.content}>
-          <AlbumArtwork
-            uri={song.artwork}
-            size={120}
-            borderRadius={Radius.lg}
-          />
+          <View style={styles.artworkContainer}>
+            <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
+              <AlbumArtwork
+                uri={song.artwork}
+                size={120}
+                borderRadius={Radius.lg}
+              />
+            </Animated.View>
+            {isCurrent && isPlaying && (
+              <View style={styles.playingIndicator}>
+                <Music size={16} color={Colors.gold} fill={Colors.gold} strokeWidth={0} />
+              </View>
+            )}
+          </View>
           <View style={styles.info}>
             <Text style={styles.featuredLabel}>Featured</Text>
             <Text style={styles.title} numberOfLines={2}>
@@ -52,13 +91,19 @@ export default function FeaturedCard({ song, queue }: FeaturedCardProps) {
               {song.artist}
             </Text>
             <View style={styles.playRow}>
-              <View style={styles.playButton}>
+              <TouchableOpacity
+                onPress={handlePlay}
+                style={styles.playButton}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
                 {isCurrent && isPlaying ? (
-                  <Text style={styles.playingText}>Now Playing</Text>
+                  <Pause size={20} color={Colors.background} fill={Colors.background} strokeWidth={0} />
                 ) : (
-                  <Text style={styles.playText}>Play</Text>
+                  <Play size={20} color={Colors.background} fill={Colors.background} strokeWidth={0} style={{ marginLeft: 2 }} />
                 )}
-              </View>
+              </TouchableOpacity>
+              <Text style={styles.playLabel}>
+                {isCurrent && isPlaying ? 'Pause' : 'Play'}
+              </Text>
             </View>
           </View>
         </View>
@@ -85,6 +130,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: Spacing.lg,
   },
+  artworkContainer: {
+    position: 'relative',
+  },
+  playingIndicator: {
+    position: 'absolute',
+    bottom: -8,
+    right: -8,
+    backgroundColor: Colors.background,
+    borderRadius: 12,
+    padding: 4,
+    borderWidth: 2,
+    borderColor: Colors.gold,
+  },
   info: {
     flex: 1,
     marginLeft: Spacing.lg,
@@ -110,21 +168,19 @@ const styles = StyleSheet.create({
   playRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: Spacing.sm,
   },
   playButton: {
     backgroundColor: Colors.gold,
-    paddingVertical: Spacing.sm,
-    paddingHorizontal: Spacing.lg,
+    width: 40,
+    height: 40,
     borderRadius: Radius.full,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  playText: {
+  playLabel: {
     ...Typography.label,
-    color: Colors.background,
-    fontWeight: '700',
-  },
-  playingText: {
-    ...Typography.label,
-    color: Colors.background,
-    fontWeight: '700',
+    color: Colors.text,
+    fontWeight: '600',
   },
 });

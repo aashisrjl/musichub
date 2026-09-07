@@ -4,7 +4,7 @@
     "slug": "musichub",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./public/logo.png",
     "scheme": "musichub",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
@@ -25,7 +25,7 @@
     "web": {
       "bundler": "metro",
       "output": "single",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./public/logo.png"
     },
     "plugins": [
       "expo-router",

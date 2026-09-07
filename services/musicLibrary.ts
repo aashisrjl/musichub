@@ -1,11 +1,11 @@
-import { Song, SongCategory } from '@/types';
-import { SONGS } from '@/data/songs';
+import { Song } from '@/types';
+import { SONGS, CATEGORIES } from '@/data/songs';
 
 export function getAllSongs(): Song[] {
   return SONGS;
 }
 
-export function getSongsByCategory(category: SongCategory): Song[] {
+export function getSongsByCategory(category: string): Song[] {
   return SONGS.filter((song) => song.category === category);
 }
 
@@ -50,6 +50,10 @@ export function getFeaturedSong(): Song | undefined {
   return SONGS[0];
 }
 
-export function getCategoryCount(category: SongCategory): number {
+export function getCategoryCount(category: string): number {
   return getSongsByCategory(category).length;
+}
+
+export function getCategories() {
+  return CATEGORIES;
 }

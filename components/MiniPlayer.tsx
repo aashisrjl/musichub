@@ -5,9 +5,10 @@ import {
   StyleSheet,
   Pressable,
   TouchableOpacity,
+  Animated,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Play, Pause } from 'lucide-react-native';
+import { Play, Pause, Music } from 'lucide-react-native';
 import AlbumArtwork from './AlbumArtwork';
 import { Colors, Typography, Spacing, Radius } from '@/theme';
 import { usePlayer } from '@/context/PlayerContext';
@@ -20,6 +21,29 @@ export default function MiniPlayer() {
     showPlayer,
   } = usePlayer();
 
+  const pulseAnim = React.useRef(new Animated.Value(1)).current;
+
+  React.useEffect(() => {
+    if (isPlaying) {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(pulseAnim, {
+            toValue: 1.03,
+            duration: 800,
+            useNativeDriver: true,
+          }),
+          Animated.timing(pulseAnim, {
+            toValue: 1,
+            duration: 800,
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
+    } else {
+      pulseAnim.setValue(1);
+    }
+  }, [isPlaying, pulseAnim]);
+
   if (!currentSong) return null;
 
   return (
@@ -31,11 +55,20 @@ export default function MiniPlayer() {
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
         style={styles.gradient}>
-        <AlbumArtwork
-          uri={currentSong.artwork}
-          size={44}
-          borderRadius={Radius.sm}
-        />
+        <View style={styles.artworkContainer}>
+          <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
+            <AlbumArtwork
+              uri={currentSong.artwork}
+              size={44}
+              borderRadius={Radius.sm}
+            />
+          </Animated.View>
+          {isPlaying && (
+            <View style={styles.playingIndicator}>
+              <Music size={10} color={Colors.gold} fill={Colors.gold} strokeWidth={0} />
+            </View>
+          )}
+        </View>
         <View style={styles.info}>
           <Text style={styles.title} numberOfLines={1}>
             {currentSong.title}
@@ -51,15 +84,15 @@ export default function MiniPlayer() {
           {isPlaying ? (
             <Pause
               size={22}
-              color={Colors.text}
-              fill={Colors.text}
+              color={Colors.background}
+              fill={Colors.background}
               strokeWidth={0}
             />
           ) : (
             <Play
               size={22}
-              color={Colors.text}
-              fill={Colors.text}
+              color={Colors.background}
+              fill={Colors.background}
               strokeWidth={0}
               style={{ marginLeft: 2 }}
             />
@@ -88,6 +121,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.glassBorder,
   },
+  artworkContainer: {
+    position: 'relative',
+  },
+  playingIndicator: {
+    position: 'absolute',
+    bottom: -4,
+    right: -4,
+    backgroundColor: Colors.background,
+    borderRadius: 8,
+    padding: 2,
+    borderWidth: 1.5,
+    borderColor: Colors.gold,
+  },
   info: {
     flex: 1,
     marginLeft: Spacing.sm + 2,
@@ -102,11 +148,16 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
   },
   playButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: Colors.glass,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: Colors.gold,
     alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: Colors.gold,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
 });

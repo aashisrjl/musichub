@@ -5,6 +5,7 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  Image,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Clock, Heart, ChevronRight, Smartphone } from 'lucide-react-native';
@@ -17,14 +18,15 @@ import {
   getAllSongs,
   getRecentlyPlayedSongs,
   getFavoriteSongs,
+  getCategories,
 } from '@/services/musicLibrary';
-import { CATEGORIES } from '@/data/songs';
 
 export default function LibraryScreen() {
   const router = useRouter();
   const { recentlyPlayed, favorites } = usePlayer();
 
   const allSongs = getAllSongs();
+  const categories = getCategories();
   const recentSongs = useMemo(
     () => getRecentlyPlayedSongs(recentlyPlayed),
     [recentlyPlayed],
@@ -37,7 +39,14 @@ export default function LibraryScreen() {
       contentContainerStyle={styles.content}
       showsVerticalScrollIndicator={false}>
       <View style={styles.header}>
-        <Text style={styles.title}>Your Library</Text>
+        <View style={styles.headerContent}>
+          <Image 
+            source={require('../../public/logo.png')} 
+            style={styles.logo}
+            resizeMode="contain"
+          />
+          <Text style={styles.title}>Your Library</Text>
+        </View>
       </View>
 
       {allSongs.length === 0 ? (
@@ -50,7 +59,7 @@ export default function LibraryScreen() {
           {/* Categories */}
           <View style={styles.section}>
             <Text style={styles.sectionLabel}>Categories</Text>
-            {CATEGORIES.map((cat) => (
+            {categories.map((cat) => (
               <CategoryCard
                 key={cat.key}
                 label={cat.label}
@@ -80,7 +89,7 @@ export default function LibraryScreen() {
           {/* Recently Played */}
           <TouchableOpacity
             style={styles.listItem}
-            onPress={() => router.push('/(tabs)/index')}
+            onPress={() => router.push('/')}
             activeOpacity={0.7}>
             <View style={styles.listIcon}>
               <Clock size={22} color={Colors.gold} />
@@ -97,7 +106,7 @@ export default function LibraryScreen() {
           {/* Favorites */}
           <TouchableOpacity
             style={styles.listItem}
-            onPress={() => router.push('/(tabs)/favorites')}
+            onPress={() => router.push('/favorites')}
             activeOpacity={0.7}>
             <View style={styles.listIcon}>
               <Heart size={22} color={Colors.gold} />
@@ -126,6 +135,16 @@ const styles = StyleSheet.create({
   header: {
     paddingTop: Spacing.xl,
     marginBottom: Spacing.lg,
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+  },
+  logo: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
   title: {
     fontSize: 28,

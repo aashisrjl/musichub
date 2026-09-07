@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Switch,
   Alert,
+  Image,
 } from 'react-native';
 import {
   Moon,
@@ -14,7 +15,6 @@ import {
   Shuffle,
   Clock,
   Trash2,
-  Info,
   ChevronRight,
   Heart,
 } from 'lucide-react-native';
@@ -72,7 +72,14 @@ export default function SettingsScreen() {
       contentContainerStyle={styles.content}
       showsVerticalScrollIndicator={false}>
       <View style={styles.header}>
-        <Text style={styles.title}>Settings</Text>
+        <View style={styles.headerContent}>
+          <Image 
+            source={require('../../public/logo.png')} 
+            style={styles.logo}
+            resizeMode="contain"
+          />
+          <Text style={styles.title}>Settings</Text>
+        </View>
       </View>
 
       {/* Playback */}
@@ -196,9 +203,11 @@ export default function SettingsScreen() {
       <View style={styles.section}>
         <Text style={styles.sectionLabel}>About</Text>
         <View style={styles.aboutCard}>
-          <View style={styles.aboutIcon}>
-            <Info size={24} color={Colors.gold} />
-          </View>
+          <Image 
+            source={require('../../public/logo.png')} 
+            style={styles.aboutLogo}
+            resizeMode="contain"
+          />
           <View>
             <Text style={styles.aboutTitle}>MusicHub</Text>
             <Text style={styles.aboutTagline}>
@@ -229,6 +238,16 @@ const styles = StyleSheet.create({
   header: {
     paddingTop: Spacing.xl,
     marginBottom: Spacing.lg,
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+  },
+  logo: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
   title: {
     fontSize: 28,
@@ -296,13 +315,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.borderSubtle,
   },
-  aboutIcon: {
+  aboutLogo: {
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: Colors.surfaceElevated,
-    alignItems: 'center',
-    justifyContent: 'center',
     marginRight: Spacing.lg,
   },
   aboutTitle: {
