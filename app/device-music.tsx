@@ -14,6 +14,7 @@ import { ChevronLeft, Smartphone, RefreshCw } from 'lucide-react-native';
 import SongListItem from '@/components/SongListItem';
 import EmptyState from '@/components/EmptyState';
 import MiniPlayer from '@/components/MiniPlayer';
+import FullPlayer from '@/components/FullPlayer';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors, Typography, Spacing, Radius } from '@/theme';
 import { Song } from '@/types';
@@ -114,6 +115,7 @@ export default function DeviceMusicScreen() {
           />
         </>
       )}
+      <FullPlayer />
       <View style={{ position: 'absolute', bottom: insets.bottom, left: 0, right: 0 }}>
         <MiniPlayer />
       </View>

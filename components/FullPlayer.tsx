@@ -6,7 +6,6 @@ import {
   Pressable,
   TouchableOpacity,
   Dimensions,
-  Modal,
   ScrollView,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -68,13 +67,10 @@ export default function FullPlayer() {
 
   const fav = isFavorite(currentSong.id);
 
+  if (!isPlayerVisible) return null;
+
   return (
-    <Modal
-      visible={isPlayerVisible}
-      animationType="slide"
-      presentationStyle="fullScreen"
-      onRequestClose={hidePlayer}>
-      <View style={styles.container}>
+    <View style={[styles.container, { position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 100, height: SCREEN_HEIGHT }]}>
         {/* Blurred background */}
         {currentSong.artwork ? (
           <View style={StyleSheet.absoluteFillObject}>
@@ -210,7 +206,6 @@ export default function FullPlayer() {
           </View>
         </ScrollView>
       </View>
-    </Modal>
   );
 }
 
@@ -229,7 +224,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: Spacing.xxl * 2,
+    paddingBottom: Spacing.xxl * 4,
   },
   header: {
     flexDirection: 'row',

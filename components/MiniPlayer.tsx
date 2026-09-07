@@ -19,6 +19,7 @@ export default function MiniPlayer() {
     isPlaying,
     togglePlayPause,
     showPlayer,
+    isPlayerVisible,
   } = usePlayer();
 
   const pulseAnim = React.useRef(new Animated.Value(1)).current;
@@ -44,7 +45,7 @@ export default function MiniPlayer() {
     }
   }, [isPlaying, pulseAnim]);
 
-  if (!currentSong) return null;
+  if (!currentSong || isPlayerVisible) return null;
 
   return (
     <Pressable

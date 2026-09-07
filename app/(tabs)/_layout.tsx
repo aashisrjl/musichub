@@ -12,6 +12,8 @@ import {
 } from 'lucide-react-native';
 import { Colors } from '@/theme';
 
+import FullPlayer from '@/components/FullPlayer';
+
 export default function TabLayout() {
   const insets = useSafeAreaInsets();
 
@@ -19,6 +21,7 @@ export default function TabLayout() {
     <Tabs
       tabBar={(props) => (
         <View style={{ backgroundColor: 'transparent' }}>
+          <FullPlayer />
           <MiniPlayer />
           <BottomTabBar {...props} />
         </View>
