@@ -13,12 +13,15 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ChevronLeft, Smartphone, RefreshCw } from 'lucide-react-native';
 import SongListItem from '@/components/SongListItem';
 import EmptyState from '@/components/EmptyState';
+import MiniPlayer from '@/components/MiniPlayer';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors, Typography, Spacing, Radius } from '@/theme';
 import { Song } from '@/types';
 import { scanDeviceMusic, requestMediaLibraryPermission } from '@/services/deviceMusic';
 
 export default function DeviceMusicScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [songs, setSongs] = useState<Song[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -111,6 +114,9 @@ export default function DeviceMusicScreen() {
           />
         </>
       )}
+      <View style={{ position: 'absolute', bottom: insets.bottom, left: 0, right: 0 }}>
+        <MiniPlayer />
+      </View>
     </View>
   );
 }
@@ -193,6 +199,6 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingHorizontal: Spacing.md,
-    paddingBottom: 120,
+    paddingBottom: 100,
   },
 });

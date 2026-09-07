@@ -1,4 +1,8 @@
 import { Tabs } from 'expo-router';
+import { View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { BottomTabBar } from '@react-navigation/bottom-tabs';
+import MiniPlayer from '@/components/MiniPlayer';
 import {
   Home,
   Library,
@@ -9,16 +13,24 @@ import {
 import { Colors } from '@/theme';
 
 export default function TabLayout() {
+  const insets = useSafeAreaInsets();
+
   return (
     <Tabs
+      tabBar={(props) => (
+        <View style={{ backgroundColor: 'transparent' }}>
+          <MiniPlayer />
+          <BottomTabBar {...props} />
+        </View>
+      )}
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
           backgroundColor: Colors.surface,
           borderTopColor: Colors.border,
           borderTopWidth: 1,
-          height: 60,
-          paddingBottom: 8,
+          height: 60 + insets.bottom,
+          paddingBottom: 8 + insets.bottom,
           paddingTop: 8,
         },
         tabBarActiveTintColor: Colors.gold,

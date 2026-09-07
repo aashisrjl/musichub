@@ -10,7 +10,7 @@ export interface DeviceScanResult {
 export async function requestMediaLibraryPermission(): Promise<boolean> {
   try {
     if (Platform.OS === 'web') return false;
-    const { status } = await MediaLibrary.requestPermissionsAsync(false);
+    const { status } = await MediaLibrary.requestPermissionsAsync(false, ['audio']);
     return status === 'granted';
   } catch {
     return false;
@@ -20,7 +20,7 @@ export async function requestMediaLibraryPermission(): Promise<boolean> {
 export async function checkMediaLibraryPermission(): Promise<boolean> {
   try {
     if (Platform.OS === 'web') return false;
-    const { status } = await MediaLibrary.getPermissionsAsync(false);
+    const { status } = await MediaLibrary.getPermissionsAsync(false, ['audio']);
     return status === 'granted';
   } catch {
     return false;
@@ -48,13 +48,11 @@ export async function scanDeviceMusic(): Promise<DeviceScanResult> {
     }
 
     const media = await MediaLibrary.getAssetsAsync({
-      mediaType: 'audio',
+      mediaType: MediaLibrary.MediaType.audio,
       first: 2000,
-      sortBy: ['default', false],
     });
 
     const songs: Song[] = media.assets
-      .filter((asset) => asset.duration > 0)
       .map((asset, index) => {
         const filename = asset.filename.replace(/\.[^/.]+$/, '');
         return {
