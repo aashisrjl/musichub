@@ -1,11 +1,9 @@
 import React from 'react';
 import { Image, View, StyleSheet, ImageStyle } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Music } from 'lucide-react-native';
 import { Colors, Radius } from '@/theme';
 
 interface AlbumArtworkProps {
-  uri?: string;
+  uri?: string | number | any;
   size?: number;
   style?: ImageStyle;
   borderRadius?: number;
@@ -19,45 +17,17 @@ export default function AlbumArtwork({
 }: AlbumArtworkProps) {
   const radius = borderRadius ?? Radius.lg;
 
-  if (uri) {
-    return (
-      <Image
-        source={{ uri }}
-        style={[{ width: size, height: size, borderRadius: radius }, style]}
-        resizeMode="cover"
-      />
-    );
-  }
+  const fallbackUri = require('../public/logo.png');
+  const actualUri = uri || fallbackUri;
+  const imageSource = typeof actualUri === 'string' ? { uri: actualUri } : actualUri;
 
   return (
-    <View
-      style={[
-        {
-          width: size,
-          height: size,
-          borderRadius: radius,
-        },
-        styles.placeholder,
-        style,
-      ]}>
-      <LinearGradient
-        colors={[Colors.purple, Colors.burgundy]}
-        style={styles.gradient}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}>
-        <Music size={size * 0.3} color={Colors.gold} strokeWidth={1.5} />
-      </LinearGradient>
-    </View>
+    <Image
+      source={imageSource}
+      style={[{ width: size, height: size, borderRadius: radius }, style]}
+      resizeMode="cover"
+    />
   );
 }
 
-const styles = StyleSheet.create({
-  placeholder: {
-    overflow: 'hidden',
-  },
-  gradient: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+const styles = StyleSheet.create({});

@@ -8,8 +8,8 @@ export interface Song {
   artist: string;
   album?: string;
   category: SongCategory;
-  audioUri: string;
-  artwork?: string;
+  audioUri: string | number | any;
+  artwork?: string | number | any;
 }
 
 export interface CategoryInfo {

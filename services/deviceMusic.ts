@@ -63,6 +63,7 @@ export async function scanDeviceMusic(): Promise<DeviceScanResult> {
           artist: 'Unknown Artist',
           category: 'device' as const,
           audioUri: asset.uri,
+          artwork: index % 2 === 0 ? require('../public/logo.png') : require('../public/banner.jpeg'),
         };
       });
 
